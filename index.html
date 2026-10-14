@@ -1,0 +1,592 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Налоговая площадка Самрук-Қазына</title>
+<style>
+:root{
+  --bg:#f5f6f8;--panel:#fff;--ink:#1b2430;--mute:#667085;--line:#e3e6ec;--accent:#0b5cad;--accent-ink:#fff;
+  --soft:#eaf2fb;--warn:#fff7e0;--warn-ink:#7a5b00;--danger:#b42318;--ok:#067647;
+  --k1:#0b5cad;--k2:#b54708;--k3:#067647;--k4:#6941c6;
+  --s1:#067647;--s2:#b42318;--s3:#0b5cad;--s4:#b54708;
+  --radius:10px;--shadow:0 1px 2px rgba(16,24,40,.06);
+}
+@media (prefers-color-scheme:dark){:root{
+  --bg:#0f141b;--panel:#171e28;--ink:#e6eaf0;--mute:#98a2b3;--line:#2a3340;--accent:#5aa2ee;--accent-ink:#0b1320;
+  --soft:#1b2a3d;--warn:#2d2610;--warn-ink:#f1d27a;--danger:#f97066;--ok:#47cd89;
+  --k1:#5aa2ee;--k2:#f79009;--k3:#47cd89;--k4:#a48afb;
+  --s1:#47cd89;--s2:#f97066;--s3:#5aa2ee;--s4:#f79009;--shadow:none;
+}}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+header.top{background:var(--panel);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:20}
+.top-in{max-width:1280px;margin:0 auto;padding:10px 16px;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.brand{font-weight:700;font-size:17px;cursor:pointer;margin-right:auto}
+.brand small{display:block;font-weight:400;color:var(--mute);font-size:12px}
+.me{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.me input,.me select{padding:6px 8px;border:1px solid var(--line);border-radius:8px;background:var(--bg);width:150px}
+.me select{width:auto}
+.disc{background:var(--warn);color:var(--warn-ink);font-size:12.5px;padding:6px 16px;text-align:center}
+.wrap{max-width:1280px;margin:0 auto;padding:16px;display:grid;grid-template-columns:270px 1fr;gap:16px;align-items:start}
+aside{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:10px;position:sticky;top:96px;max-height:calc(100vh - 112px);overflow:auto}
+aside h4{margin:12px 8px 4px;font-size:11.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--mute)}
+.sec{display:flex;justify-content:space-between;gap:8px;width:100%;text-align:left;background:none;border:0;padding:7px 8px;border-radius:8px;cursor:pointer}
+.sec:hover{background:var(--soft)}
+.sec.on{background:var(--accent);color:var(--accent-ink)}
+.sec .n{opacity:.75;font-variant-numeric:tabular-nums}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px}
+.stack>*+*{margin-top:12px}
+.btn{border:1px solid var(--line);background:var(--panel);padding:7px 12px;border-radius:8px;cursor:pointer}
+.btn:hover{background:var(--soft)}
+.btn.pri{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.btn.pri:hover{filter:brightness(1.08)}
+.btn.dng{color:var(--danger)}
+.btn.sm{padding:3px 9px;font-size:13px}
+.btn.on{background:var(--soft);border-color:var(--accent);color:var(--accent)}
+.btn[disabled]{opacity:.5;cursor:not-allowed}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.sp{flex:1}
+.tools{display:grid;grid-template-columns:1fr;gap:8px}
+.tools .f{display:flex;gap:8px;flex-wrap:wrap}
+.tools input,.tools select,.fld input,.fld select,.fld textarea{padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);min-width:0}
+.tools input[type=search]{flex:1;min-width:200px}
+.secinfo h2{margin:0 0 4px;font-size:20px}
+.muted{color:var(--mute)}
+.small{font-size:13px}
+.tag{display:inline-block;padding:1px 8px;border-radius:99px;font-size:12px;border:1px solid currentColor;white-space:nowrap}
+.k-law{color:var(--k1)}.k-chg{color:var(--k2)}.k-pr{color:var(--k3)}.k-q{color:var(--k4)}
+.art{display:inline-block;padding:1px 8px;border-radius:6px;background:var(--soft);color:var(--accent);font-size:12px;border:0;cursor:pointer}
+.th{cursor:pointer;display:block}
+.th:hover{border-color:var(--accent)}
+.th h3{margin:6px 0 4px;font-size:16.5px}
+.th p{margin:0;color:var(--mute);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.snip{margin-top:8px;padding:6px 10px;border-left:3px solid var(--accent);background:var(--soft);border-radius:4px;font-size:13.5px}
+mark{background:#ffe27a;color:#000;border-radius:2px;padding:0 1px}
+.meta{display:flex;gap:10px;flex-wrap:wrap;align-items:center;font-size:13px;color:var(--mute)}
+.pin{color:var(--k2)}
+.st-closed{color:var(--ok)}.st-archived{color:var(--mute)}.st-open{color:var(--accent)}
+.body{white-space:pre-wrap;word-break:break-word}
+.sum{background:var(--soft);border-left:4px solid var(--ok);padding:10px 14px;border-radius:6px}
+.bar{display:flex;height:12px;border-radius:99px;overflow:hidden;background:var(--line)}
+.bar i{display:block}
+.leg{display:flex;gap:14px;flex-wrap:wrap;font-size:13px;margin-top:6px}
+.leg b{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px}
+.reply{border-top:1px solid var(--line);padding:12px 0}
+.reply:first-child{border-top:0}
+.reply.del .body{color:var(--mute);font-style:italic}
+.fld{display:block;margin-bottom:10px}
+.fld>span{display:block;font-size:13px;color:var(--mute);margin-bottom:3px}
+.fld input,.fld select,.fld textarea{width:100%}
+.fld textarea{min-height:110px;resize:vertical}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.err{color:var(--danger);font-size:13px;margin:4px 0}
+dialog{border:1px solid var(--line);border-radius:12px;padding:20px;width:min(640px,94vw);background:var(--panel);color:var(--ink)}
+dialog::backdrop{background:rgba(0,0,0,.45)}
+dialog h3{margin:0 0 12px}
+.log{list-style:none;margin:0;padding:0;font-size:13.5px}
+.log li{padding:4px 0;border-bottom:1px dashed var(--line);display:flex;gap:10px}
+.log time{color:var(--mute);min-width:118px}
+.toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:9px 16px;border-radius:8px;z-index:50;font-size:14px}
+.ro{background:var(--soft);padding:10px 14px;border-radius:8px;color:var(--mute)}
+@media (max-width:860px){
+  .wrap{grid-template-columns:1fr}
+  aside{position:static;max-height:none;display:flex;gap:6px;overflow-x:auto;padding:8px}
+  aside h4{display:none}
+  .sec{white-space:nowrap;width:auto;border:1px solid var(--line)}
+  .g2{grid-template-columns:1fr}
+  .me input{width:120px}
+}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="top-in">
+    <div class="brand" id="home" tabindex="0" role="link">Налоговая площадка<small>Группа «Самрук-Қазына» · обсуждение Налогового кодекса РК</small></div>
+    <div class="me">
+      <label class="small muted" for="meName">Вы:</label>
+      <input id="meName" placeholder="Ваше имя" aria-label="Ваше имя">
+      <input id="meCo" placeholder="Организация" aria-label="Организация">
+      <select id="meRole" aria-label="Роль (демо)">
+        <option value="contributor">Участник</option>
+        <option value="editor">Редактор</option>
+        <option value="viewer">Читатель</option>
+      </select>
+    </div>
+  </div>
+  <div class="disc">Высказывания — личные мнения участников, не официальная позиция Фонда и не заменяют разъяснений КГД МФ РК. Не публикуйте коммерческую тайну и персональные данные.</div>
+</header>
+
+<div class="wrap">
+  <aside id="side" aria-label="Разделы кодекса"></aside>
+  <main id="main"></main>
+</div>
+
+<dialog id="dlg"></dialog>
+
+<script>
+'use strict';
+/* ====== Данные ====== */
+const KINDS={law:'Действующая норма',chg:'Изменения в НК',pr:'Практика и разъяснения',q:'Вопрос коллегам'};
+const KCLS={law:'k-law',chg:'k-chg',pr:'k-pr',q:'k-q'};
+const STANCES={agree:['Согласен','--s1'],diff:['Иное мнение','--s2'],clar:['Уточнение','--s3'],prac:['Из практики','--s4']};
+const STATUS={open:'Идёт обсуждение',closed:'Завершена',archived:'В архиве'};
+const KEY='snk-tax-v1';
+const DAY=864e5;
+
+function defaultSections(){
+  const g1='Общие вопросы',g2='Налоги и платежи',g3='Особые вопросы';
+  const l=[[g1,'Общие положения и принципы'],[g1,'Налоговое администрирование'],[g1,'Налоговый контроль и проверки'],[g1,'Обжалование и ответственность'],
+    [g2,'КПН'],[g2,'ИПН и социальный налог'],[g2,'НДС'],[g2,'Акцизы'],[g2,'Налогообложение недропользования'],[g2,'Налоги на имущество, землю и транспорт'],[g2,'Прочие налоги и платежи'],
+    [g3,'Специальные налоговые режимы'],[g3,'Трансфертное ценообразование'],[g3,'Международное налогообложение'],[g3,'Иное']];
+  return l.map((x,i)=>({id:'s'+(i+1),name:x[1],grp:x[0],from:null,to:null,order:i,desc:''}));
+}
+function seed(){
+  const now=Date.now(),secs=defaultSections();
+  const find=n=>secs.find(s=>s.name===n).id;
+  const T=(id,o)=>Object.assign({id,articles:[],ref:'',company:'',pinned:false,status:'open',summary:'',log:[],rev:[],editedAt:null},o);
+  const th=[
+    T('t1',{kind:'law',sec:find('НДС'),title:'Зачёт НДС по услугам внутри группы',body:'Коллеги, как вы подтверждаете право на зачёт НДС по внутригрупповым услугам (управленческие, ИТ)? Какие документы запрашивает налоговый орган при проверке?',articles:[],company:'Дочерняя организация А',authorId:'u1',createdAt:now-12*DAY}),
+    T('t2',{kind:'chg',sec:find('КПН'),title:'Проект изменений по вычетам по КПН',body:'Опубликован проект поправок, затрагивающий порядок отнесения расходов на вычеты. Предлагаю собрать мнения: какие виды расходов группы затронуты в первую очередь?',ref:'Проект закона, публикация на портале открытых НПА',company:'Дочерняя организация Б',authorId:'u2',createdAt:now-6*DAY,pinned:true}),
+    T('t3',{kind:'pr',sec:find('Налоговый контроль и проверки'),title:'Практика камерального контроля: сроки ответов на уведомления',body:'Делимся опытом: в какие сроки вы отвечаете на уведомления по камеральному контролю и как оформляете пояснения.',company:'Дочерняя организация В',authorId:'u3',createdAt:now-30*DAY,status:'closed',summary:'Итог: отвечать в установленный срок с приложением подтверждающих документов; пояснения оформлять отдельным письмом.'}),
+  ];
+  th.forEach(t=>{t.log=[{t:t.createdAt,by:t.authorId,type:'create'}];if(t.pinned)t.log.push({t:t.createdAt+1,by:'u2',type:'pin'});});
+  th[2].log.push({t:now-20*DAY,by:'u3',type:'close'});
+  const R=(id,tid,by,stance,body,ago,co)=>({id,threadId:tid,body,stance,company:co||'',authorId:by,createdAt:now-ago*DAY,deleted:false});
+  const rp=[
+    R('r1','t1','u2','prac','У нас зачёт принимается при наличии договора, акта и ЭСФ. Дополнительно запрашивали обоснование экономической выгоды.',10,'Дочерняя организация Б'),
+    R('r2','t1','u3','diff','Считаю, что требование экономической выгоды избыточно, если услуга реально оказана и ЭСФ выписан корректно.',9,'Дочерняя организация В'),
+    R('r3','t1','u1','clar','Уточню: проверяющие обычно смотрят на соответствие ЭСФ фактическому оказанию услуг.',8,'Дочерняя организация А'),
+    R('r4','t2','u1','agree','Поддерживаю подход, затронет прежде всего представительские и консультационные расходы.',5,'Дочерняя организация А'),
+    R('r5','t3','u2','prac','Отвечаем в течение установленного срока, пояснения отдельным письмом.',25,'Дочерняя организация Б'),
+  ];
+  return{threads:th,replies:rp,likes:[],sections:secs,
+    users:{u1:'Айгерим С.',u2:'Данияр К.',u3:'Марат Т.'}};
+}
+let db;
+function load(){try{const s=localStorage.getItem(KEY);if(s)return JSON.parse(s)}catch(e){}return null}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(db))}catch(e){toast('Не удалось сохранить: хранилище браузера недоступно')}}
+db=load()||seed();
+const meKey=KEY+'-me';
+let me={id:'',name:'',company:'',role:'contributor'};
+try{const m=JSON.parse(localStorage.getItem(meKey)||'null');if(m)me=m}catch(e){}
+if(!me.id){me.id='u'+Math.random().toString(36).slice(2,8);}
+function saveMe(){try{localStorage.setItem(meKey,JSON.stringify(me))}catch(e){}}
+function myName(){return me.name||'Участник'}
+function nameOf(id){if(id===me.id)return myName();return db.users[id]||'Участник'}
+
+/* ====== Утилиты ====== */
+const $=s=>document.querySelector(s);
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const uid=p=>p+Date.now().toString(36)+Math.random().toString(36).slice(2,5);
+const fmt=t=>new Date(t).toLocaleString('ru-RU',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
+const fmtD=t=>new Date(t).toLocaleDateString('ru-RU',{day:'2-digit',month:'short',year:'numeric'});
+function toast(m){const e=document.createElement('div');e.className='toast';e.textContent=m;document.body.appendChild(e);setTimeout(()=>e.remove(),2600)}
+const isEditor=()=>me.role==='editor';
+const canWrite=()=>me.role!=='viewer';
+const canManage=t=>isEditor()||(canWrite()&&t.authorId===me.id);
+const secName=id=>{const s=db.sections.find(x=>x.id===id);return s?s.name:'Без раздела'};
+function terms(q){return q.toLowerCase().split(/\s+/).filter(Boolean)}
+function hl(text,ts){
+  const e=esc(text);if(!ts||!ts.length)return e;
+  const re=new RegExp('('+ts.map(t=>esc(t).replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).join('|')+')','gi');
+  return e.replace(re,'<mark>$1</mark>');
+}
+function parseArticles(s){return [...new Set((s.match(/\d+(?:-\d+)?/g)||[]))]}
+function sectionByArticle(n){
+  const x=parseInt(n,10);if(isNaN(x))return null;
+  return db.sections.find(s=>s.from!=null&&s.to!=null&&x>=s.from&&x<=s.to)||null;
+}
+const repliesOf=id=>db.replies.filter(r=>r.threadId===id);
+const likesOf=id=>db.likes.filter(l=>l.targetId===id).length;
+const liked=id=>db.likes.some(l=>l.targetId===id&&l.uid===me.id);
+function lastAct(t){let m=t.editedAt||t.createdAt;repliesOf(t.id).forEach(r=>{if(r.createdAt>m)m=r.createdAt});t.log.forEach(l=>{if(l.t>m)m=l.t});return m}
+function logEv(t,type){t.log.push({t:Date.now(),by:me.id,type})}
+const LOGT={create:'создана тема',edit:'тема отредактирована',reply:'добавлен ответ',close:'обсуждение завершено',reopen:'обсуждение возобновлено',archive:'тема отправлена в архив',unarchive:'тема возвращена из архива',pin:'тема закреплена',unpin:'тема откреплена',hide:'ответ скрыт',restore:'ответ восстановлен'};
+
+/* ====== Состояние интерфейса ====== */
+const F={q:'',sec:'',kind:'',status:'active',art:'',period:'',mine:false,sort:'activity'};
+let view={t:null}; // открытая тема
+
+/* ====== Боковая панель ====== */
+function renderSide(){
+  const cnt={};db.threads.forEach(t=>{if(t.status!=='archived'||F.status==='archived'||F.status==='all')cnt[t.sec]=(cnt[t.sec]||0)+1});
+  const total=Object.values(cnt).reduce((a,b)=>a+b,0);
+  let h=`<button class="sec ${!F.sec?'on':''}" data-act="sec" data-id=""><span>Все разделы</span><span class="n">${total}</span></button>`;
+  const grps=[...new Set(db.sections.slice().sort((a,b)=>a.order-b.order).map(s=>s.grp))];
+  grps.forEach(g=>{
+    h+=`<h4>${esc(g)}</h4>`;
+    db.sections.filter(s=>s.grp===g).sort((a,b)=>a.order-b.order).forEach(s=>{
+      h+=`<button class="sec ${F.sec===s.id?'on':''}" data-act="sec" data-id="${s.id}"><span>${esc(s.name)}</span><span class="n">${cnt[s.id]||0}</span></button>`;
+    });
+  });
+  const orphan=db.threads.filter(t=>!db.sections.some(s=>s.id===t.sec)).length;
+  if(orphan)h+=`<h4>—</h4><button class="sec ${F.sec==='none'?'on':''}" data-act="sec" data-id="none"><span>Без раздела</span><span class="n">${orphan}</span></button>`;
+  if(isEditor())h+=`<h4>Управление</h4><button class="sec" data-act="editSecs"><span>⚙ Настроить разделы</span></button>`;
+  $('#side').innerHTML=h;
+}
+
+/* ====== Список тем ====== */
+function renderList(){
+  view.t=null;
+  const secs=db.sections.slice().sort((a,b)=>a.order-b.order);
+  $('#main').innerHTML=`<div class="stack">
+    <div id="secinfo"></div>
+    <div class="card tools">
+      <div class="f"><input type="search" id="q" placeholder="Поиск по темам, ответам, статьям…" aria-label="Поиск" value="${esc(F.q)}">
+      ${canWrite()?'<button class="btn pri" data-act="newThread">+ Новая тема</button>':''}</div>
+      <div class="f">
+        <select id="fKind" aria-label="Тип"><option value="">Все типы</option>${Object.entries(KINDS).map(([k,v])=>`<option value="${k}" ${F.kind===k?'selected':''}>${v}</option>`).join('')}</select>
+        <select id="fStatus" aria-label="Статус">
+          ${[['active','Без архива'],['open','Идёт обсуждение'],['closed','Завершённые'],['archived','Архив'],['all','Все']].map(([k,v])=>`<option value="${k}" ${F.status===k?'selected':''}>${v}</option>`).join('')}</select>
+        <input id="fArt" placeholder="Статья №" style="width:100px" value="${esc(F.art)}" aria-label="Номер статьи">
+        <select id="fPer" aria-label="Период">${[['','За всё время'],['30','30 дней'],['90','3 месяца'],['365','Год']].map(([k,v])=>`<option value="${k}" ${F.period===k?'selected':''}>${v}</option>`).join('')}</select>
+        <select id="fSort" aria-label="Сортировка">${[['rel','По релевантности'],['new','Новые'],['activity','С новой активностью'],['likes','Самые полезные']].map(([k,v])=>`<option value="${k}" ${F.sort===k?'selected':''}>${v}</option>`).join('')}</select>
+        <label class="small row"><input type="checkbox" id="fMine" ${F.mine?'checked':''}> Только мои</label>
+        <button class="btn sm" data-act="reset">Сбросить</button>
+      </div>
+    </div>
+    <div id="results" class="stack"></div></div>`;
+  renderResults();
+}
+function secCard(){
+  const el=$('#secinfo');if(!el)return;
+  const s=db.sections.find(x=>x.id===F.sec);
+  if(!s){el.innerHTML='';return}
+  const ts=db.threads.filter(t=>t.sec===s.id);
+  const la=ts.length?Math.max(...ts.map(lastAct)):null;
+  el.innerHTML=`<div class="card secinfo"><h2>${esc(s.name)}</h2>
+    <div class="meta"><span>${esc(s.grp)}</span>${s.from!=null?`<span>ст. ${s.from}–${s.to}</span>`:''}<span>Тем: ${ts.length}</span>${la?`<span>Активность: ${fmtD(la)}</span>`:''}</div>
+    ${s.desc?`<p class="muted" style="margin:8px 0 0">${esc(s.desc)}</p>`:''}</div>`;
+}
+function runSearch(){
+  const ts=terms(F.q),now=Date.now(),res=[];
+  db.threads.forEach(t=>{
+    if(F.sec==='none'){if(db.sections.some(s=>s.id===t.sec))return}else if(F.sec&&t.sec!==F.sec)return;
+    if(F.kind&&t.kind!==F.kind)return;
+    if(F.status==='active'&&t.status==='archived')return;
+    if(['open','closed','archived'].includes(F.status)&&t.status!==F.status)return;
+    if(F.art&&!t.articles.includes(F.art.trim()))return;
+    if(F.period&&now-lastAct(t)>F.period*DAY)return;
+    const reps=repliesOf(t.id).filter(r=>!r.deleted);
+    if(F.mine&&t.authorId!==me.id&&!reps.some(r=>r.authorId===me.id))return;
+    let score=0,snips=[],ok=true;
+    if(ts.length){
+      const f1=(t.title).toLowerCase();
+      const f2=[t.articles.join(' '),t.ref,secName(t.sec),t.summary].join(' ').toLowerCase();
+      const f3=t.body.toLowerCase();
+      const rtext=reps.map(r=>r.body).join(' \n').toLowerCase();
+      for(const w of ts){
+        const a=f1.includes(w),b=f2.includes(w),c=f3.includes(w),d=rtext.includes(w);
+        if(!(a||b||c||d)){ok=false;break}
+        score+=(a?10:0)+(b?5:0)+(c?3:0)+(d?1:0);
+      }
+      if(!ok)return;
+      snips=reps.filter(r=>ts.some(w=>r.body.toLowerCase().includes(w)));
+    }
+    res.push({t,score,snips,reps});
+  });
+  const sort=(F.q&&F.sort==='rel')?'rel':(F.sort==='rel'?'activity':F.sort);
+  res.sort((a,b)=>{
+    if(a.t.pinned!==b.t.pinned&&!F.q)return a.t.pinned?-1:1;
+    if(sort==='rel')return b.score-a.score||lastAct(b.t)-lastAct(a.t);
+    if(sort==='new')return b.t.createdAt-a.t.createdAt;
+    if(sort==='likes')return likesOf(b.t.id)-likesOf(a.t.id);
+    return lastAct(b.t)-lastAct(a.t);
+  });
+  return res;
+}
+function renderResults(){
+  secCard();
+  const el=$('#results');if(!el)return;
+  const ts=terms(F.q),res=runSearch();
+  let h='';
+  if(ts.length){
+    const m=res.reduce((n,r)=>n+r.snips.length,0);
+    h+=`<div class="muted small">Найдено тем: ${res.length}${m?`, совпадений в ответах: ${m}`:''}</div>`;
+  }
+  if(!res.length){
+    h+=`<div class="card"><p>Ничего не найдено.</p><button class="btn" data-act="reset">Сбросить условия поиска</button></div>`;
+  }
+  res.forEach(({t,snips,reps})=>{
+    const n=reps.length,lk=likesOf(t.id);
+    h+=`<article class="card th" tabindex="0" role="link" data-act="open" data-id="${t.id}">
+      <div class="row"><span class="tag ${KCLS[t.kind]}">${KINDS[t.kind]}</span>
+      ${t.pinned?'<span class="pin small">📌 закреплено</span>':''}
+      <span class="tag st-${t.status}">${STATUS[t.status]}</span>
+      <span class="small muted">${esc(secName(t.sec))}</span></div>
+      <h3>${hl(t.title,ts)}</h3>
+      <p>${hl(t.body,ts)}</p>
+      ${t.articles.length?`<div class="row" style="margin-top:8px">${t.articles.map(a=>`<button class="art" data-act="art" data-id="${esc(a)}">ст. ${esc(a)}</button>`).join('')}</div>`:''}
+      ${snips.slice(0,2).map(r=>`<div class="snip"><span class="muted">${esc(nameOf(r.authorId))}:</span> ${hl(r.body.length>200?r.body.slice(0,200)+'…':r.body,ts)}</div>`).join('')}
+      <div class="meta" style="margin-top:8px"><span>${esc(nameOf(t.authorId))}${t.company?', '+esc(t.company):''}</span><span>Ответов: ${n}</span><span>Полезно: ${lk}</span><span>Активность: ${fmtD(lastAct(t))}</span></div>
+    </article>`;
+  });
+  el.innerHTML=h;
+}
+
+/* ====== Страница темы ====== */
+function renderThread(id){
+  const t=db.threads.find(x=>x.id===id);
+  if(!t){renderList();return}
+  view.t=id;
+  const reps=repliesOf(id).sort((a,b)=>a.createdAt-b.createdAt);
+  const live=reps.filter(r=>!r.deleted);
+  const st={};live.forEach(r=>st[r.stance]=(st[r.stance]||0)+1);
+  const bar=live.length?`<div class="card"><b>Расклад мнений</b>
+    <div class="bar" style="margin-top:8px">${Object.keys(STANCES).filter(k=>st[k]).map(k=>`<i style="width:${st[k]/live.length*100}%;background:var(${STANCES[k][1]})"></i>`).join('')}</div>
+    <div class="leg">${Object.keys(STANCES).map(k=>`<span><b style="background:var(${STANCES[k][1]})"></b>${STANCES[k][0]}: ${st[k]||0}</span>`).join('')}</div></div>`:'';
+  const mine=canManage(t);
+  const acts=[];
+  if(canWrite())acts.push(`<button class="btn sm ${liked(t.id)?'on':''}" data-act="like" data-id="${t.id}">👍 Полезно · ${likesOf(t.id)}</button>`);
+  else acts.push(`<span class="small muted">Полезно: ${likesOf(t.id)}</span>`);
+  if(mine){
+    if(t.status!=='archived')acts.push(`<button class="btn sm" data-act="editThread" data-id="${t.id}">Редактировать</button>`);
+    if(t.status==='open')acts.push(`<button class="btn sm" data-act="closeThread" data-id="${t.id}">Завершить с итогом</button>`);
+    if(t.status==='closed')acts.push(`<button class="btn sm" data-act="reopen" data-id="${t.id}">Возобновить</button>`);
+    if(t.status!=='archived')acts.push(`<button class="btn sm" data-act="archive" data-id="${t.id}">В архив</button>`);
+    else acts.push(`<button class="btn sm" data-act="unarchive" data-id="${t.id}">Вернуть из архива</button>`);
+  }
+  if(isEditor()){
+    acts.push(`<button class="btn sm" data-act="pin" data-id="${t.id}">${t.pinned?'Открепить':'Закрепить'}</button>`);
+    acts.push(`<button class="btn sm dng" data-act="delThread" data-id="${t.id}">Удалить окончательно</button>`);
+  }
+  const canReply=canWrite()&&t.status==='open';
+  const replyForm=canReply?`<div class="card"><b>Ваш ответ</b>
+    <div class="g2" style="margin-top:8px"><label class="fld"><span>Позиция</span><select id="rStance">${Object.entries(STANCES).map(([k,v])=>`<option value="${k}">${v[0]}</option>`).join('')}</select></label>
+    <label class="fld"><span>Организация (необязательно)</span><input id="rCo" value="${esc(me.company)}"></label></div>
+    <label class="fld"><span>Текст ответа</span><textarea id="rBody"></textarea></label>
+    <div id="rErr" class="err"></div><button class="btn pri" data-act="reply" data-id="${t.id}">Опубликовать</button></div>`
+    :`<div class="ro">${!canWrite()?'У вас режим чтения — публикация недоступна.':'В завершённой или архивной теме новые ответы не принимаются.'}</div>`;
+  $('#main').innerHTML=`<div class="stack">
+    <div><button class="btn sm" data-act="back">← К списку</button></div>
+    <article class="card">
+      <div class="row"><span class="tag ${KCLS[t.kind]}">${KINDS[t.kind]}</span><span class="tag st-${t.status}">${STATUS[t.status]}</span>${t.pinned?'<span class="pin small">📌 закреплено</span>':''}
+      <span class="small muted">${esc(secName(t.sec))}</span></div>
+      <h2 style="margin:8px 0">${esc(t.title)}</h2>
+      <div class="meta"><span>${esc(nameOf(t.authorId))}${t.company?', '+esc(t.company):''}</span><span>${fmt(t.createdAt)}</span>${t.editedAt?`<span>изм. ${fmt(t.editedAt)}</span>`:''}</div>
+      ${t.articles.length?`<div class="row" style="margin-top:8px">${t.articles.map(a=>`<button class="art" data-act="art" data-id="${esc(a)}">ст. ${esc(a)}</button>`).join('')}</div>`:''}
+      ${t.ref?`<div class="small muted" style="margin-top:8px">Документ: ${esc(t.ref)}</div>`:''}
+      <p class="body">${esc(t.body)}</p>
+      ${t.summary?`<div class="sum"><b>Итог обсуждения</b><div class="body">${esc(t.summary)}</div></div>`:''}
+      <div class="row" style="margin-top:12px">${acts.join('')}</div>
+    </article>
+    ${bar}
+    <div class="card"><b>Ответы (${live.length})</b>
+      ${reps.length?reps.map(r=>replyHtml(r,t)).join(''):'<p class="muted">Пока нет ответов.</p>'}</div>
+    ${replyForm}
+    <div class="card"><b>История темы</b>
+      <ul class="log" style="margin-top:8px">${t.log.slice().reverse().map(l=>`<li><time>${fmt(l.t)}</time><span>${esc(nameOf(l.by))} — ${LOGT[l.type]||l.type}</span></li>`).join('')}</ul>
+      ${t.rev.length?`<div style="margin-top:10px"><b class="small">Прежние версии</b><div class="row" style="margin-top:6px">${t.rev.map((v,i)=>`<button class="btn sm" data-act="rev" data-id="${t.id}" data-i="${i}">${fmt(v.at)}</button>`).join('')}</div></div>`:''}
+    </div></div>`;
+  window.scrollTo(0,0);
+}
+function replyHtml(r,t){
+  const own=r.authorId===me.id;
+  if(r.deleted&&!isEditor())return `<div class="reply del"><div class="body">Ответ удалён ${r.deletedBy==='editor'?'модератором':'автором'}</div></div>`;
+  const [sn,sc]=STANCES[r.stance]||['',''];
+  return `<div class="reply ${r.deleted?'del':''}">
+    <div class="row"><span class="tag" style="color:var(${sc})">${sn}</span><b>${esc(nameOf(r.authorId))}</b><span class="muted small">${esc(r.company)}</span><span class="muted small">${fmt(r.createdAt)}</span></div>
+    ${r.deleted?'<div class="small muted">Скрыт — виден только редактору</div>':''}
+    <div class="body" style="margin:6px 0">${esc(r.body)}</div>
+    <div class="row">
+      ${!r.deleted&&canWrite()?`<button class="btn sm ${liked(r.id)?'on':''}" data-act="like" data-id="${r.id}">👍 ${likesOf(r.id)}</button>`:(!r.deleted?`<span class="small muted">👍 ${likesOf(r.id)}</span>`:'')}
+      ${!r.deleted&&(own||isEditor())&&canWrite()?`<button class="btn sm" data-act="hide" data-id="${r.id}">Скрыть</button>`:''}
+      ${r.deleted&&isEditor()?`<button class="btn sm" data-act="restore" data-id="${r.id}">Восстановить</button>`:''}
+    </div></div>`;
+}
+
+/* ====== Диалоги ====== */
+const dlg=$('#dlg');
+function openDlg(html){dlg.innerHTML=html;if(!dlg.open)dlg.showModal()}
+function closeDlg(){dlg.close()}
+function threadForm(t){
+  const edit=!!t;
+  const o=t||{kind:'q',sec:F.sec&&F.sec!=='none'?F.sec:'',title:'',body:'',articles:[],ref:'',company:me.company};
+  openDlg(`<h3>${edit?'Редактирование темы':'Новая тема'}</h3>
+   <div class="g2"><label class="fld"><span>Тип</span><select id="fk">${Object.entries(KINDS).map(([k,v])=>`<option value="${k}" ${o.kind===k?'selected':''}>${v}</option>`).join('')}</select></label>
+   <label class="fld"><span>Раздел кодекса *</span><select id="fs"><option value="">— выберите —</option>${db.sections.slice().sort((a,b)=>a.order-b.order).map(s=>`<option value="${s.id}" ${o.sec===s.id?'selected':''}>${esc(s.grp)} · ${esc(s.name)}</option>`).join('')}</select></label></div>
+   <label class="fld"><span>Название * (не короче 5 символов)</span><input id="ft" value="${esc(o.title)}"></label>
+   <label class="fld"><span>Описание * (не короче 10 символов)</span><textarea id="fb">${esc(o.body)}</textarea></label>
+   <div class="g2"><label class="fld"><span>Статьи НК РК (через запятую)</span><input id="fa" value="${esc(o.articles.join(', '))}" placeholder="например: 400, 412"></label>
+   <label class="fld"><span>Реквизиты документа (необязательно)</span><input id="fr" value="${esc(o.ref)}"></label></div>
+   ${edit?'':`<label class="fld"><span>Организация (необязательно)</span><input id="fc" value="${esc(o.company)}"></label>`}
+   <div id="ferr" class="err"></div>
+   <div class="row"><button class="btn pri" data-act="saveThread" data-id="${edit?t.id:''}">${edit?'Сохранить':'Опубликовать'}</button><button class="btn" data-act="cancel">Отмена</button></div>`);
+  $('#fa').addEventListener('input',()=>{
+    const first=parseArticles($('#fa').value)[0],s=first&&sectionByArticle(first);
+    if(s)$('#fs').value=s.id;
+  });
+}
+function saveThread(id){
+  const title=$('#ft').value.trim(),body=$('#fb').value.trim(),sec=$('#fs').value;
+  const err=m=>{$('#ferr').textContent=m};
+  if(!sec)return err('Выберите раздел кодекса.');
+  if(title.length<5)return err('Название слишком короткое (минимум 5 символов).');
+  if(body.length<10)return err('Описание слишком короткое (минимум 10 символов).');
+  const data={kind:$('#fk').value,sec,title,body,articles:parseArticles($('#fa').value),ref:$('#fr').value.trim()};
+  if(id){
+    const t=db.threads.find(x=>x.id===id);
+    t.rev.push({at:t.editedAt||t.createdAt,by:t.authorId,title:t.title,body:t.body,ref:t.ref,articles:t.articles,sec:t.sec});
+    if(t.rev.length>10)t.rev.shift();
+    Object.assign(t,data);t.editedAt=Date.now();logEv(t,'edit');
+    save();closeDlg();renderThread(id);
+  }else{
+    const co=$('#fc').value.trim();me.company=co||me.company;saveMe();
+    const t=Object.assign({id:uid('t'),company:co,pinned:false,status:'open',summary:'',log:[],rev:[],editedAt:null,authorId:me.id,createdAt:Date.now()},data);
+    t.log.push({t:t.createdAt,by:me.id,type:'create'});
+    db.threads.push(t);db.users[me.id]=myName();save();closeDlg();renderSide();renderThread(t.id);
+  }
+  renderSide();toast('Сохранено');
+}
+function closeForm(id){
+  openDlg(`<h3>Завершить обсуждение</h3><p class="muted small">Запишите итог — он будет виден всем и участвует в поиске.</p>
+    <label class="fld"><span>Итог * (не короче 10 символов)</span><textarea id="sm"></textarea></label>
+    <div id="ferr" class="err"></div><div class="row"><button class="btn pri" data-act="doClose" data-id="${id}">Завершить</button><button class="btn" data-act="cancel">Отмена</button></div>`);
+}
+function secEditor(){
+  const rows=db.sections.slice().sort((a,b)=>a.order-b.order).map(s=>`
+   <div class="card" style="padding:10px;margin-bottom:8px" data-sid="${s.id}">
+    <div class="g2"><label class="fld"><span>Название</span><input class="sn" value="${esc(s.name)}"></label><label class="fld"><span>Группа</span><input class="sg" value="${esc(s.grp)}"></label></div>
+    <div class="g2"><label class="fld"><span>Статьи от</span><input class="sf" type="number" value="${s.from??''}"></label><label class="fld"><span>до</span><input class="st" type="number" value="${s.to??''}"></label></div>
+    <label class="fld"><span>Описание</span><input class="sd" value="${esc(s.desc)}"></label>
+    <div class="row"><button class="btn sm" data-act="secUp" data-id="${s.id}">↑</button><button class="btn sm" data-act="secDn" data-id="${s.id}">↓</button><span class="sp"></span><button class="btn sm dng" data-act="secDel" data-id="${s.id}">Удалить</button></div></div>`).join('');
+  openDlg(`<h3>Разделы кодекса</h3><div style="max-height:58vh;overflow:auto">${rows}</div>
+    <div class="row" style="margin-top:10px"><button class="btn" data-act="secAdd">+ Добавить раздел</button><span class="sp"></span><button class="btn pri" data-act="secSave">Сохранить</button><button class="btn" data-act="cancel">Закрыть</button></div>`);
+}
+function secCollect(){
+  document.querySelectorAll('[data-sid]').forEach(el=>{
+    const s=db.sections.find(x=>x.id===el.dataset.sid);if(!s)return;
+    s.name=el.querySelector('.sn').value.trim()||s.name;s.grp=el.querySelector('.sg').value.trim()||s.grp;
+    const f=el.querySelector('.sf').value,to=el.querySelector('.st').value;
+    s.from=f===''?null:+f;s.to=to===''?null:+to;s.desc=el.querySelector('.sd').value.trim();
+  });
+}
+function secMove(id,d){
+  secCollect();
+  const a=db.sections.slice().sort((x,y)=>x.order-y.order),i=a.findIndex(s=>s.id===id),j=i+d;
+  if(j<0||j>=a.length)return;
+  [a[i],a[j]]=[a[j],a[i]];a.forEach((s,k)=>s.order=k);secEditor();
+}
+
+/* ====== Действия ====== */
+const A={
+  sec(el){F.sec=el.dataset.id;renderSide();renderList()},
+  open(el){location.hash='t='+el.dataset.id},
+  back(){location.hash=''},
+  art(el,e){e.stopPropagation();F.art=el.dataset.id;F.q='';F.sec='';F.status='all';location.hash='';renderSide();renderList()},
+  reset(){Object.assign(F,{q:'',sec:'',kind:'',status:'active',art:'',period:'',mine:false,sort:'activity'});renderSide();renderList()},
+  newThread(){threadForm()},
+  editThread(el){threadForm(db.threads.find(t=>t.id===el.dataset.id))},
+  saveThread(el){saveThread(el.dataset.id)},
+  cancel(){closeDlg()},
+  like(el){
+    const id=el.dataset.id,i=db.likes.findIndex(l=>l.targetId===id&&l.uid===me.id);
+    if(i>=0)db.likes.splice(i,1);else db.likes.push({targetId:id,uid:me.id,at:Date.now()});
+    save();renderThread(view.t);
+  },
+  reply(el){
+    const body=$('#rBody').value.trim();
+    if(!body){$('#rErr').textContent='Ответ не может быть пустым.';return}
+    const t=db.threads.find(x=>x.id===el.dataset.id);
+    const co=$('#rCo').value.trim();me.company=co||me.company;saveMe();db.users[me.id]=myName();
+    db.replies.push({id:uid('r'),threadId:t.id,body,stance:$('#rStance').value,company:co,authorId:me.id,createdAt:Date.now(),deleted:false});
+    logEv(t,'reply');save();renderThread(t.id);
+  },
+  hide(el){
+    const r=db.replies.find(x=>x.id===el.dataset.id);if(!confirm('Скрыть ответ?'))return;
+    r.deleted=true;r.deletedBy=isEditor()&&r.authorId!==me.id?'editor':'author';r.deletedAt=Date.now();
+    logEv(db.threads.find(t=>t.id===r.threadId),'hide');save();renderThread(view.t);
+  },
+  restore(el){
+    const r=db.replies.find(x=>x.id===el.dataset.id);r.deleted=false;
+    logEv(db.threads.find(t=>t.id===r.threadId),'restore');save();renderThread(view.t);
+  },
+  closeThread(el){closeForm(el.dataset.id)},
+  doClose(el){
+    const s=$('#sm').value.trim();
+    if(s.length<10){$('#ferr').textContent='Итог слишком короткий (минимум 10 символов).';return}
+    const t=db.threads.find(x=>x.id===el.dataset.id);
+    t.status='closed';t.summary=s;t.closedAt=Date.now();t.closedBy=me.id;logEv(t,'close');save();closeDlg();renderSide();renderThread(t.id);
+  },
+  reopen(el){const t=db.threads.find(x=>x.id===el.dataset.id);t.status='open';logEv(t,'reopen');save();renderSide();renderThread(t.id)},
+  archive(el){const t=db.threads.find(x=>x.id===el.dataset.id);t.status='archived';logEv(t,'archive');save();renderSide();renderThread(t.id)},
+  unarchive(el){const t=db.threads.find(x=>x.id===el.dataset.id);t.status=t.summary?'closed':'open';logEv(t,'unarchive');save();renderSide();renderThread(t.id)},
+  pin(el){const t=db.threads.find(x=>x.id===el.dataset.id);t.pinned=!t.pinned;logEv(t,t.pinned?'pin':'unpin');save();renderThread(t.id)},
+  delThread(el){
+    if(!confirm('Удалить тему и все ответы окончательно? Это нельзя отменить.'))return;
+    const id=el.dataset.id;
+    db.threads=db.threads.filter(t=>t.id!==id);
+    const rids=db.replies.filter(r=>r.threadId===id).map(r=>r.id);
+    db.replies=db.replies.filter(r=>r.threadId!==id);
+    db.likes=db.likes.filter(l=>l.targetId!==id&&!rids.includes(l.targetId));
+    save();renderSide();location.hash='';
+  },
+  rev(el){
+    const t=db.threads.find(x=>x.id===el.dataset.id),v=t.rev[+el.dataset.i];
+    openDlg(`<h3>Версия от ${fmt(v.at)}</h3><div class="meta">Автор: ${esc(nameOf(v.by))} · ${esc(secName(v.sec))}</div>
+      <h4>${esc(v.title)}</h4><p class="body">${esc(v.body)}</p>
+      ${v.articles.length?`<p class="small">Статьи: ${v.articles.map(a=>'ст. '+esc(a)).join(', ')}</p>`:''}
+      ${v.ref?`<p class="small muted">Документ: ${esc(v.ref)}</p>`:''}
+      <button class="btn" data-act="cancel">Закрыть</button>`);
+  },
+  editSecs(){secEditor()},
+  secAdd(){
+    secCollect();const g=db.sections[0]?db.sections[db.sections.length-1].grp:'Новая группа';
+    db.sections.push({id:uid('s'),name:'Новый раздел',grp:g,from:null,to:null,order:db.sections.length,desc:''});secEditor();
+  },
+  secUp(el){secMove(el.dataset.id,-1)},
+  secDn(el){secMove(el.dataset.id,1)},
+  secDel(el){
+    secCollect();
+    const s=db.sections.find(x=>x.id===el.dataset.id);
+    if(!confirm(`Удалить раздел «${s.name}»? Темы сохранятся как «Без раздела».`))return;
+    db.sections=db.sections.filter(x=>x.id!==s.id);secEditor();
+  },
+  secSave(){
+    secCollect();
+    for(const s of db.sections)if(s.from!=null&&s.to!=null&&s.from>s.to){toast(`«${s.name}»: диапазон «от» больше «до»`);return}
+    save();closeDlg();renderSide();route();toast('Разделы сохранены');
+  }
+};
+document.addEventListener('click',e=>{
+  const el=e.target.closest('[data-act]');if(!el)return;
+  const f=A[el.dataset.act];if(f){e.preventDefault();f(el,e)}
+});
+document.addEventListener('keydown',e=>{
+  if((e.key==='Enter'||e.key===' ')&&e.target.matches('.th,.brand')){e.preventDefault();e.target.click()}
+});
+dlg.addEventListener('click',e=>{if(e.target===dlg)closeDlg()});
+
+/* ====== Фильтры и шапка ====== */
+document.addEventListener('input',e=>{
+  const id=e.target.id;
+  if(id==='q'){F.q=e.target.value;if(F.q&&F.sort!=='rel'&&!F._manual)F.sort='rel';if(!F.q&&F.sort==='rel'&&!F._manual)F.sort='activity';
+    const s=$('#fSort');if(s)s.value=F.sort;renderResults()}
+  else if(id==='fArt'){F.art=e.target.value.trim();renderResults()}
+});
+document.addEventListener('change',e=>{
+  const id=e.target.id;
+  const map={fKind:'kind',fStatus:'status',fPer:'period',fSort:'sort'};
+  if(map[id]){F[map[id]]=e.target.value;if(id==='fSort')F._manual=true;renderSide();renderResults()}
+  else if(id==='fMine'){F.mine=e.target.checked;renderResults()}
+  else if(id==='meName'){me.name=e.target.value.trim();db.users[me.id]=myName();saveMe();save();route()}
+  else if(id==='meCo'){me.company=e.target.value.trim();saveMe()}
+  else if(id==='meRole'){me.role=e.target.value;saveMe();renderSide();route()}
+});
+$('#home').addEventListener('click',()=>{location.hash=''});
+
+/* ====== Маршрутизация ====== */
+function route(){
+  const m=location.hash.match(/^#t=(.+)$/);
+  if(m)renderThread(m[1]);else renderList();
+}
+window.addEventListener('hashchange',route);
+$('#meName').value=me.name;$('#meCo').value=me.company;$('#meRole').value=me.role;
+saveMe();renderSide();route();
+</script>
+</body>
+</html>
